@@ -1,6 +1,17 @@
 package com.project.professor.allocation.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class Professor {
+
+    @Id
+    private Long id;
+    private String name;
+    private String cpf;
+    private Long departmentId;
+
     public Long getId() {
         return id;
     }
@@ -33,8 +44,4 @@ public class Professor {
         this.departmentId = departmentId;
     }
 
-    private Long id;
-    private String name;
-    private String cpf;
-    private Long departmentId;
 }

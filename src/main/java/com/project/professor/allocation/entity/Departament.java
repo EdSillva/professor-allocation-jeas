@@ -1,6 +1,15 @@
 package com.project.professor.allocation.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class Departament {
+
+    @Id
+    private Long id;
+    private String name;
+
     public Long getId() {
         return id;
     }
@@ -16,8 +25,5 @@ public class Departament {
     public void setName(String name) {
         this.name = name;
     }
-
-    private Long id;
-    private String name;
 
 }
