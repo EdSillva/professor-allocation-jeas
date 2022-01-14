@@ -1,15 +1,20 @@
 package com.project.professor.allocation.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Professor {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "cpf", unique = true, nullable = false, length = 14)
     private String cpf;
+
     private Long departmentId;
 
     public Long getId() {
