@@ -4,12 +4,10 @@ import javax.persistence.*;
 
 @Entity
 public class Course {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "name", unique = true, nullable = true)
+    @Column(unique = true, nullable = false)
     private String name;
 
     public Long getId() {
@@ -27,5 +25,4 @@ public class Course {
     public void setName(String name) {
         this.name = name;
     }
-
 }

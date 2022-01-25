@@ -6,25 +6,35 @@ import java.util.Date;
 
 @Entity
 public class Allocation {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "day", nullable = false)
+    @Column(nullable = false)
     private DayOfWeek day;
 
     @Temporal(TemporalType.TIME)
-    @Column(name = "start", nullable = false)
+    @Column(nullable = false)
     private Date start;
 
     @Temporal(TemporalType.TIME)
-    @Column(name = "end", nullable = false)
+    @Column(nullable = false)
     private Date end;
 
+    @Column(name = "course_id", nullable = false)
     private Long courseId;
+
+    @Column(name = "professor_id", nullable = false)
     private Long professorId;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "course_id", nullable = false, insertable = false, updatable = false)
+    private Course course;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "professor_id", nullable = false, insertable = false, updatable = false)
+    private Professor professor;
 
     public Long getId() {
         return id;
@@ -74,4 +84,19 @@ public class Allocation {
         this.professorId = professorId;
     }
 
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public Professor getProfessor() {
+        return professor;
+    }
+
+    public void setProfessor(Professor professor) {
+        this.professor = professor;
+    }
 }
