@@ -1,6 +1,8 @@
 package com.project.professor.allocation.entity;
 
+
 import javax.persistence.*;
+
 
 @Entity
 public class Professor {
@@ -9,13 +11,25 @@ public class Professor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(nullable = false)
     private String name;
 
-    @Column(name = "cpf", unique = true, nullable = false, length = 14)
+    @Column(nullable = false)
     private String cpf;
 
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    @Column(unique = true, nullable = false)
     private Long departmentId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "department_id", nullable = false, insertable = false, updatable = false)
+    private Department department;
 
     public Long getId() {
         return id;
@@ -48,5 +62,4 @@ public class Professor {
     public void setDepartmentId(Long departmentId) {
         this.departmentId = departmentId;
     }
-
 }

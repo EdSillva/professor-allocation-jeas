@@ -3,7 +3,7 @@ package com.project.professor.allocation.entity;
 import javax.persistence.*;
 
 @Entity
-public class Departament {
+public class Department {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
