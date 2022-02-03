@@ -12,7 +12,7 @@ import java.time.DayOfWeek;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application.properties")
-public class AllocationServiceTest {
+public class ProfessorServiceTest {
 
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mmZ");
 

@@ -26,6 +26,14 @@ public class Course {
         this.name = name;
     }
 
+    public Course update(Course course) {
+        return course;
+    }
+
+    public Course create(Course course) {
+        return course;
+    }
+
     @Override
     public String toString() {
         return "Course{" +
@@ -33,4 +41,5 @@ public class Course {
                 ", name='" + name + '\'' +
                 '}';
     }
+
 }

@@ -1,6 +1,8 @@
 package com.project.professor.allocation.service;
 
 import com.project.professor.allocation.entity.Allocation;
+import com.project.professor.allocation.entity.Course;
+import com.project.professor.allocation.entity.Professor;
 import com.project.professor.allocation.repository.AllocationRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +13,14 @@ import java.util.Optional;
 public class AllocationService {
 
     private AllocationRepository allocationRepository;
+    private ProfessorService professorService;
+    private CourseService courseService;
 
-    public AllocationService(AllocationRepository allocationRepository) {
+    public AllocationService(AllocationRepository allocationRepository, ProfessorService professorService,
+                             CourseService courseService) {
         this.allocationRepository = allocationRepository;
+        this.professorService = professorService;
+        this.courseService = courseService;
     }
 
     public List<Allocation> findByProfessorId(Long professorId)
@@ -65,7 +72,7 @@ public class AllocationService {
     public Allocation create(Allocation allocation)
     {
         allocation.setId(null);
-        Allocation allocationNew = allocationRepository.save(allocation);
+        Allocation allocationNew = saveInternal(allocation);
         return allocationNew;
     }
 
@@ -75,7 +82,7 @@ public class AllocationService {
 
         if (id != null && allocationRepository.existsById(id))
         {
-            Allocation allocationNew = allocationRepository.save(allocation);
+            Allocation allocationNew = saveInternal(allocation);
             return allocationNew;
         }
         else
@@ -95,5 +102,43 @@ public class AllocationService {
     public void deleteAll()
     {
         allocationRepository.deleteAll();
+    }
+
+    private Allocation saveInternal(Allocation allocation) {
+        if (hasCollision(allocation)) {
+            throw new RuntimeException();
+        } else {
+            allocation = allocationRepository.save(allocation);
+
+            Professor professor = professorService.findById(allocation.getProfessorId());
+            allocation.setProfessor(professor);
+
+            Course course = courseService.findById(allocation.getCourseId());
+            allocation.setCourse(course);
+
+            return allocation;
+        }
+    }
+
+    boolean hasCollision(Allocation newAllocation) {
+        boolean hasCollision = false;
+
+        List<Allocation> currentAllocations = allocationRepository.findByProfessorId(newAllocation.getProfessorId());
+
+        for (Allocation currentAllocation : currentAllocations) {
+            hasCollision = hasCollision(currentAllocation, newAllocation);
+            if (hasCollision) {
+                break;
+            }
+        }
+
+        return hasCollision;
+    }
+
+    private boolean hasCollision(Allocation currentAllocation, Allocation newAllocation) {
+        return !currentAllocation.getId().equals(newAllocation.getId())
+                && currentAllocation.getDay() == newAllocation.getDay()
+                && currentAllocation.getStart().compareTo(newAllocation.getEnd()) < 0
+                && newAllocation.getStart().compareTo(currentAllocation.getEnd()) < 0;
     }
 }
