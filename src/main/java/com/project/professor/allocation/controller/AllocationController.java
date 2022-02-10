@@ -19,7 +19,7 @@ public class AllocationController {
         this.allocationService = allocationService;
     }
 
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<Allocation>> findAll() {
         List<Allocation> allocations = allocationService.findAll();
