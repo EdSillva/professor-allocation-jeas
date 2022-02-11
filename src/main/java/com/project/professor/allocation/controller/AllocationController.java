@@ -2,6 +2,9 @@ package com.project.professor.allocation.controller;
 
 import com.project.professor.allocation.entity.Allocation;
 import com.project.professor.allocation.service.AllocationService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,10 @@ public class AllocationController {
         this.allocationService = allocationService;
     }
 
+    @ApiOperation(value = "Find all allocation")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK")
+    })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<Allocation>> findAll() {
@@ -26,6 +33,12 @@ public class AllocationController {
         return new ResponseEntity<>(allocations, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Find a allocation")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 404, message = "Not Found")
+    })
     @GetMapping(path = "/{allocation_id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Allocation> findById(@PathVariable(name = "allocation_id") Long id) {
@@ -37,6 +50,11 @@ public class AllocationController {
         }
     }
 
+    @ApiOperation(value = "create a allocation")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Created"),
+            @ApiResponse(code = 400, message = "Bad Request")
+    })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Allocation> create(@RequestBody Allocation allocation) {
@@ -48,6 +66,12 @@ public class AllocationController {
         }
     }
 
+    @ApiOperation(value = "Update a allocation")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 404, message = "Not Found")
+    })
     @PutMapping(path = "/{allocation_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Allocation> update(@PathVariable(name = "allocation_id") Long id, @RequestBody Allocation allocation) {
@@ -64,6 +88,10 @@ public class AllocationController {
         }
     }
 
+    @ApiOperation(value = "Delete a allocation")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "No Content")
+    })
     @DeleteMapping(path = "/{department_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteById(@PathVariable(name = "department_id") Long id) {
@@ -71,6 +99,10 @@ public class AllocationController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @ApiOperation(value = "Delete all allocation")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "No Content")
+    })
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteAll() {
@@ -78,4 +110,19 @@ public class AllocationController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping(path = "/professor/{professor_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<Allocation>> findByProfessorId(@PathVariable(name = "professor_id") Long professorId)
+    {
+        List<Allocation> allocations = allocationService.findByProfessorId(professorId);
+        return new ResponseEntity<>(allocations, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/course/{course_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<Allocation>> findByCourseId(@PathVariable(name = "course_id") Long courseId)
+    {
+        List<Allocation> allocations = allocationService.findByCourseId(courseId);
+        return new ResponseEntity<>(allocations, HttpStatus.OK);
+    }
 }
