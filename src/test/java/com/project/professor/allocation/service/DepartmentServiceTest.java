@@ -14,40 +14,5 @@ import java.time.DayOfWeek;
 @TestPropertySource(locations = "classpath:application.properties")
 public class DepartmentServiceTest {
 
-    SimpleDateFormat sdf = new SimpleDateFormat("HH:mmZ");
-
-    @Autowired
-    AllocationService allocationService;
-
-    @Test
-    public void create() throws ParseException {
-        Allocation allocation = new Allocation();
-        allocation.setId(10L);
-        allocation.setDay(DayOfWeek.MONDAY);
-        allocation.setStart(sdf.parse("19:00-0300"));
-        allocation.setEnd(sdf.parse("20:00-0300"));
-        allocation.setProfessorId(1L);
-        allocation.setCourseId(1L);
-
-        Allocation allocationNew = allocationService.create(allocation);
-
-        System.out.println(allocationNew);
-    }
-
-    @Test
-    public void update() throws ParseException {
-        Allocation allocation = new Allocation();
-        allocation.setId(null);
-        allocation.setDay(DayOfWeek.WEDNESDAY);
-        allocation.setStart(sdf.parse("19:00-0300"));
-        allocation.setEnd(sdf.parse("22:00-0300"));
-        allocation.setProfessorId(1L);
-        allocation.setCourseId(1L);
-
-        Allocation allocationNew = allocationService.update(allocation);
-
-        System.out.println(allocationNew);
-    }
-
 }
 
