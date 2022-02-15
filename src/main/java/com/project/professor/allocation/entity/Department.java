@@ -1,10 +1,14 @@
 package com.project.professor.allocation.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
+@Table(name = "department")
 public class Department {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -12,8 +16,13 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToMany(mappedBy = "department")
+    private List<Professor> professors;
 
     public Long getId() {
         return id;
@@ -29,6 +38,14 @@ public class Department {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Professor> getProfessors() {
+        return professors;
+    }
+
+    public void setProfessors(List<Professor> professors) {
+        this.professors = professors;
     }
 
     @Override

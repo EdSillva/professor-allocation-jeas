@@ -1,6 +1,7 @@
 package com.project.professor.allocation.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -13,49 +14,53 @@ import java.time.DayOfWeek;
 import java.util.Date;
 
 @Entity
+@Table(name = "allocation")
 public class Allocation {
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private DayOfWeek day;
+    @Column(name = "day", nullable = false)
+    private DayOfWeek dayOfWeek;
 
-    @ApiModelProperty(example = "10:00-0300")
+    @ApiModelProperty(example = "19:00-0300")
     @JsonFormat(pattern = "HH:mmZ")
     @JsonSerialize(using = DateSerializer.class)
     @JsonDeserialize(using = DateDeserializers.DateDeserializer.class)
     @Temporal(TemporalType.TIME)
-    @Column(nullable = false)
-    private Date start;
+    @Column(name = "start", nullable = false)
+    private Date startHour;
 
-    @ApiModelProperty(example = "18:00-0300")
+    @ApiModelProperty(example = "22:00-0300")
     @JsonFormat(pattern = "HH:mmZ")
     @JsonSerialize(using = DateSerializer.class)
     @JsonDeserialize(using = DateDeserializers.DateDeserializer.class)
     @Temporal(TemporalType.TIME)
-    @Column(nullable = false)
-    private Date end;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column(name = "course_id", nullable = false)
-    private Long courseId;
+    @Column(name = "end", nullable = false)
+    private Date endHour;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "professor_id", nullable = false)
     private Long professorId;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "course_id", nullable = false, insertable = false, updatable = false)
-    private Course course;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "course_id", nullable = false)
+    private Long courseId;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonIgnoreProperties({"allocations"})
     @ManyToOne(optional = false)
     @JoinColumn(name = "professor_id", nullable = false, insertable = false, updatable = false)
     private Professor professor;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonIgnoreProperties({"allocations"})
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "course_id", nullable = false, insertable = false, updatable = false)
+    private Course course;
 
     public Long getId() {
         return id;
@@ -65,36 +70,28 @@ public class Allocation {
         this.id = id;
     }
 
-    public DayOfWeek getDay() {
-        return day;
+    public DayOfWeek getDayOfWeek() {
+        return dayOfWeek;
     }
 
-    public void setDay(DayOfWeek day) {
-        this.day = day;
+    public void setDayOfWeek(DayOfWeek dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
     }
 
-    public Date getStart() {
-        return start;
+    public Date getStartHour() {
+        return startHour;
     }
 
-    public void setStart(Date start) {
-        this.start = start;
+    public void setStartHour(Date startHour) {
+        this.startHour = startHour;
     }
 
-    public Date getEnd() {
-        return end;
+    public Date getEndHour() {
+        return endHour;
     }
 
-    public void setEnd(Date end) {
-        this.end = end;
-    }
-
-    public Long getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(Long courseId) {
-        this.courseId = courseId;
+    public void setEndHour(Date endHour) {
+        this.endHour = endHour;
     }
 
     public Long getProfessorId() {
@@ -105,12 +102,12 @@ public class Allocation {
         this.professorId = professorId;
     }
 
-    public Course getCourse() {
-        return course;
+    public Long getCourseId() {
+        return courseId;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
     }
 
     public Professor getProfessor() {
@@ -121,17 +118,25 @@ public class Allocation {
         this.professor = professor;
     }
 
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
     @Override
     public String toString() {
         return "Allocation{" +
                 "id=" + id +
-                ", day=" + day +
-                ", start=" + start +
-                ", end=" + end +
-                ", courseId=" + courseId +
+                ", dayOfWeek=" + dayOfWeek +
+                ", startHour=" + startHour +
+                ", endHour=" + endHour +
                 ", professorId=" + professorId +
-                ", course=" + course +
+                ", courseId=" + courseId +
                 ", professor=" + professor +
+                ", course=" + course +
                 '}';
     }
 }

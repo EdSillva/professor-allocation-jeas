@@ -1,10 +1,15 @@
 package com.project.professor.allocation.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
+@Table(name = "professor")
 public class Professor {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -12,10 +17,10 @@ public class Professor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "cpf", unique = true, nullable = false)
     private String cpf;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -23,9 +28,15 @@ public class Professor {
     private Long departmentId;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonIgnoreProperties({"professors"})
     @ManyToOne(optional = false)
     @JoinColumn(name = "department_id", nullable = false, insertable = false, updatable = false)
     private Department department;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToMany(mappedBy = "professor")
+    private List<Allocation> allocations;
 
     public Long getId() {
         return id;
@@ -65,6 +76,14 @@ public class Professor {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public List<Allocation> getAllocations() {
+        return allocations;
+    }
+
+    public void setAllocations(List<Allocation> allocations) {
+        this.allocations = allocations;
     }
 
     @Override

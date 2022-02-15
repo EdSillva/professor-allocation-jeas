@@ -7,105 +7,64 @@ import com.project.professor.allocation.repository.AllocationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AllocationService {
 
-    private AllocationRepository allocationRepository;
-    private ProfessorService professorService;
-    private CourseService courseService;
+    private final AllocationRepository allocationRepository;
+    private final ProfessorService professorService;
+    private final CourseService courseService;
 
     public AllocationService(AllocationRepository allocationRepository, ProfessorService professorService,
                              CourseService courseService) {
+        super();
         this.allocationRepository = allocationRepository;
         this.professorService = professorService;
         this.courseService = courseService;
     }
 
-    public List<Allocation> findByProfessorId(Long professorId)
-    {
-        if (professorId != null)
-        {
-            List<Allocation> allocations = allocationRepository.findByProfessorId(professorId);
-            return allocations;
-        }
-        else
-        {
-            return null;
-        }
+    public List<Allocation> findAll() {
+        return allocationRepository.findAll();
     }
 
-    public List<Allocation> findByCourseId(Long courseId)
-    {
-        if (courseId != null)
-        {
-            List<Allocation> allocations = allocationRepository.findByCourseId(courseId);
-            return allocations;
-        }
-        else
-        {
-            return null;
-        }
+    public Allocation findById(Long id) {
+        return allocationRepository.findById(id).orElse(null);
     }
 
-    public Allocation findById(Long id)
-    {
-        if (id != null)
-        {
-            Optional<Allocation> allocationOptional = allocationRepository.findById(id);
-            Allocation allocation = allocationOptional.orElse(null);
-            return allocation;
-        }
-        else
-        {
-            return null;
-        }
+    public List<Allocation> findByProfessor(Long professorId) {
+        return allocationRepository.findByProfessorId(professorId);
     }
 
-    public List<Allocation> findAll()
-    {
-        List<Allocation> allocations = allocationRepository.findAll();
-        return allocations;
+    public List<Allocation> findByCourse(Long courseId) {
+        return allocationRepository.findByCourseId(courseId);
     }
 
-    public Allocation create(Allocation allocation)
-    {
+    public Allocation save(Allocation allocation) {
         allocation.setId(null);
-        Allocation allocationNew = saveInternal(allocation);
-        return allocationNew;
+        return saveInternal(allocation);
     }
 
-    public Allocation update(Allocation allocation)
-    {
+    public Allocation update(Allocation allocation) {
         Long id = allocation.getId();
-
-        if (id != null && allocationRepository.existsById(id))
-        {
-            Allocation allocationNew = saveInternal(allocation);
-            return allocationNew;
-        }
-        else
-        {
+        if (id != null && allocationRepository.existsById(id)) {
+            return saveInternal(allocation);
+        } else {
             return null;
         }
     }
 
-    public void deleteById(Long id)
-    {
-        if (id != null && allocationRepository.existsById(id))
-        {
+    public void deleteById(Long id) {
+        if (id != null && allocationRepository.existsById(id)) {
             allocationRepository.deleteById(id);
         }
     }
 
-    public void deleteAll()
-    {
-        allocationRepository.deleteAll();
+    public void deleteAll() {
+        allocationRepository.deleteAllInBatch();
     }
 
     private Allocation saveInternal(Allocation allocation) {
-        if (hasCollision(allocation)) {
+        if (!isEndHourGreaterThanStartHour(allocation) || hasCollision(allocation)) {
             throw new RuntimeException();
         } else {
             allocation = allocationRepository.save(allocation);
@@ -118,6 +77,11 @@ public class AllocationService {
 
             return allocation;
         }
+    }
+
+    boolean isEndHourGreaterThanStartHour(Allocation allocation) {
+        return allocation != null && allocation.getStartHour() != null && allocation.getEndHour() != null
+                && allocation.getEndHour().compareTo(allocation.getStartHour()) > 0;
     }
 
     boolean hasCollision(Allocation newAllocation) {
@@ -137,8 +101,8 @@ public class AllocationService {
 
     private boolean hasCollision(Allocation currentAllocation, Allocation newAllocation) {
         return !currentAllocation.getId().equals(newAllocation.getId())
-                && currentAllocation.getDay() == newAllocation.getDay()
-                && currentAllocation.getStart().compareTo(newAllocation.getEnd()) < 0
-                && newAllocation.getStart().compareTo(currentAllocation.getEnd()) < 0;
+                && currentAllocation.getDayOfWeek() == newAllocation.getDayOfWeek()
+                && currentAllocation.getStartHour().compareTo(newAllocation.getEndHour()) < 0
+                && newAllocation.getStartHour().compareTo(currentAllocation.getEndHour()) < 0;
     }
 }

@@ -13,32 +13,34 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/course")
+@RequestMapping(path = "/courses")
 public class CourseController {
+
     private final CourseService courseService;
 
     public CourseController(CourseService courseService) {
+        super();
         this.courseService = courseService;
     }
 
-    @ApiOperation(value = "Find all course")
+    @ApiOperation(value = "Find all courses")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK")
     })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<Course>> findAll() {
-        List<Course> courses = courseService.findAll();
+    public ResponseEntity<List<Course>> findAll(@RequestParam(name = "name", required = false) String name) {
+        List<Course> courses = courseService.findAll(name);
         return new ResponseEntity<>(courses, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Find a course")
+    @ApiOperation(value = "Find a course by id")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 404, message = "Not Found")
     })
-    @GetMapping(path = "/{allocation_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{course_id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Course> findById(@PathVariable(name = "course_id") Long id) {
         Course course = courseService.findById(id);
@@ -49,23 +51,23 @@ public class CourseController {
         }
     }
 
-    @ApiOperation(value = "create a course")
+    @ApiOperation(value = "Save a course")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Created"),
             @ApiResponse(code = 400, message = "Bad Request")
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Course> create(@RequestBody Course course) {
+    public ResponseEntity<Course> save(@RequestBody Course course) {
         try {
-            course = courseService.create(course);
+            course = courseService.save(course);
             return new ResponseEntity<>(course, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @ApiOperation(value = "Update a couse")
+    @ApiOperation(value = "Update a course")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad Request"),
@@ -73,7 +75,8 @@ public class CourseController {
     })
     @PutMapping(path = "/{course_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Course> update(@PathVariable(name = "course_id") Long id, @RequestBody Course course) {
+    public ResponseEntity<Course> update(@PathVariable(name = "course_id") Long id,
+                                         @RequestBody Course course) {
         course.setId(id);
         try {
             course = courseService.update(course);
@@ -91,14 +94,14 @@ public class CourseController {
     @ApiResponses({
             @ApiResponse(code = 204, message = "No Content")
     })
-    @DeleteMapping(path = "/{department_id}")
+    @DeleteMapping(path = "/{course_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteById(@PathVariable(name = "department_id") Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable(name = "course_id") Long id) {
         courseService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @ApiOperation(value = "Delete all course")
+    @ApiOperation(value = "Delete all courses")
     @ApiResponses({
             @ApiResponse(code = 204, message = "No Content")
     })

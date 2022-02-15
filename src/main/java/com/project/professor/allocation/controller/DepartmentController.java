@@ -19,27 +19,28 @@ public class DepartmentController {
     private final DepartmentService departmentService;
 
     public DepartmentController(DepartmentService departmentService) {
+        super();
         this.departmentService = departmentService;
     }
 
-    @ApiOperation(value = "Find all department")
+    @ApiOperation(value = "Find all departments")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK")
     })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<Department>> findAll() {
-        List<Department> departments = departmentService.findAll();
+    public ResponseEntity<List<Department>> findAll(@RequestParam(name = "name", required = false) String name) {
+        List<Department> departments = departmentService.findAll(name);
         return new ResponseEntity<>(departments, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Find a department")
+    @ApiOperation(value = "Find a department by id")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 404, message = "Not Found")
     })
-    @GetMapping(path = "/{allocation_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{department_id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Department> findById(@PathVariable(name = "department_id") Long id) {
         Department department = departmentService.findById(id);
@@ -50,16 +51,16 @@ public class DepartmentController {
         }
     }
 
-    @ApiOperation(value = "create a department")
+    @ApiOperation(value = "Save a department")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Created"),
             @ApiResponse(code = 400, message = "Bad Request")
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Department> create(@RequestBody Department department) {
+    public ResponseEntity<Department> save(@RequestBody Department department) {
         try {
-            department = departmentService.create(department);
+            department = departmentService.save(department);
             return new ResponseEntity<>(department, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -74,7 +75,8 @@ public class DepartmentController {
     })
     @PutMapping(path = "/{department_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Department> update(@PathVariable(name = "department_id") Long id, @RequestBody Department department) {
+    public ResponseEntity<Department> update(@PathVariable(name = "department_id") Long id,
+                                             @RequestBody Department department) {
         department.setId(id);
         try {
             department = departmentService.update(department);
@@ -88,7 +90,7 @@ public class DepartmentController {
         }
     }
 
-    @ApiOperation(value = "Delete a allocation")
+    @ApiOperation(value = "Delete a department")
     @ApiResponses({
             @ApiResponse(code = 204, message = "No Content")
     })
@@ -99,7 +101,7 @@ public class DepartmentController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @ApiOperation(value = "Delete all allocation")
+    @ApiOperation(value = "Delete all departments")
     @ApiResponses({
             @ApiResponse(code = 204, message = "No Content")
     })

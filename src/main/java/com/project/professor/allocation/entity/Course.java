@@ -1,10 +1,14 @@
 package com.project.professor.allocation.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
+@Table(name = "course")
 public class Course {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -12,8 +16,13 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToMany(mappedBy = "course")
+    private List<Allocation> allocations;
 
     public Long getId() {
         return id;
@@ -31,12 +40,12 @@ public class Course {
         this.name = name;
     }
 
-    public Course update(Course course) {
-        return course;
+    public List<Allocation> getAllocations() {
+        return allocations;
     }
 
-    public Course create(Course course) {
-        return course;
+    public void setAllocations(List<Allocation> allocations) {
+        this.allocations = allocations;
     }
 
     @Override
@@ -46,5 +55,4 @@ public class Course {
                 ", name='" + name + '\'' +
                 '}';
     }
-
 }

@@ -11,4 +11,6 @@ import java.util.List;
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
 
     List<Department> findByNameContaining(String partName);
+
+    List<Department> findByNameContainingIgnoreCase(String name);
 }
